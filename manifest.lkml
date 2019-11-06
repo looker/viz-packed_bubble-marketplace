@@ -15,3 +15,4 @@ visualization: {
   url: "https://raw.githubusercontent.com/looker/viz-packed_bubble-marketplace/master/bubble_chart.js"
   label: "@{VIS_LABEL}"
 }
+
