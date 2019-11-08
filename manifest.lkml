@@ -12,7 +12,7 @@ constant: VIS_ID {
 
 visualization: {
   id: "@{VIS_ID}"
-  url: "https://raw.githubusercontent.com/looker/viz-packed_bubble-marketplace/master/bubble_chart.js"
+  url: "https://looker-custom-viz-a.lookercdn.com/master/bubble_chart.js"
   label: "@{VIS_LABEL}"
 }
 
