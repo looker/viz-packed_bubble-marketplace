@@ -1,16 +1,29 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import BubbleChart from './bubble_chart'
+import SSF from "ssf";
 
 const baseOptions = {
-
+  color_by_type: {
+    type: 'string',
+    label: `Color Rule`,
+    display: 'select',
+    values: [
+      {'Gradient': 'gradient'},
+      {'Fill': 'fill'},
+      {'Categorical': 'cat'},
+    ],
+    default: 'gradient',
+    section: 'Series',
+    order: 0,
+  },
   toColor: {
     type: "array",
-    label: "Value Color Range",
-    display: "color",
+    label: "Fill Color",
     section: "Series",
-    order: 1,
-    default: ["#5A2FC2"]
+    default: ["#7FCDAE", "#ffed6f", "#EE7772"],
+    display: "colors",
+    order: 1
   },
   // ["#5A2FC2", "#6740C7", "#7551CC", "#8363D1", "#9174D6", "#9E85DB","#AC97E0","#BAA8E5","#C8B9EA","#D5CBEF","#E3DCF4","#F1EDF9"]
   // ["#F1EDF9", "#E3DCF4", "#D5CBEF", "#C8B9EA", "#BAA8E5", "#AC97E0", "#9E85DB", "#9174D6", "#8363D1", "#7551CC", "#6740C7", "#5A2FC2"]
@@ -28,6 +41,12 @@ const baseOptions = {
     section: 'Series',
     order: 3,
   },
+  value_format: {
+    type: 'string',
+    label: `Value Formatting Override`,
+    section: 'Series',
+    order: 7
+  },
   font_size_value: {
     type: "string",
     label: "Value Font Size",
@@ -42,6 +61,12 @@ const baseOptions = {
     section: "Style",
     order: 5
   },
+  // color_application: {
+  //   type: 'object',
+  //   display: 'color_application',
+  //   label: 'Palette',
+  //   section: "Series",
+  // },
   // group_by_category: {
   //   type: 'boolean',
   //   label: `Group by Category`,
@@ -95,24 +120,6 @@ looker.plugins.visualizations.add({
     const bubbleChartData = []
     var maxColor = []
 
-    data.forEach((row, index) => {
-      const dimensionValue = dimensions.map(dimension => row[dimension.name].rendered || row[dimension.name].value).join('-')
-      // const secondDimensionValue = secondDimension && row[secondDimension.name].value
-      const firstMeasureValue = firstMeasure && row[firstMeasure.name].value
-      const secondMeasureValue = secondMeasure && row[secondMeasure.name].value
-
-      var color = config['color_by'] ? row[config['color_by']].value : secondMeasureValue
-
-      maxColor.push(color)
-      
-      bubbleChartData.push({
-        itemName: dimensionValue,
-        // groupName: secondDimensionValue,
-        value: config['size_by'] ? row[config['size_by']].value : firstMeasureValue,
-        color: color
-      })
-    })
-
     const options = baseOptions
     
     options[`size_by`] = {
@@ -140,6 +147,25 @@ looker.plugins.visualizations.add({
     }
 
     this.trigger('registerOptions', options)
+
+    data.forEach((row, index) => {
+      const dimensionValue = dimensions.map(dimension => row[dimension.name].rendered || row[dimension.name].value).join('-')
+      // const secondDimensionValue = secondDimension && row[secondDimension.name].value
+      const firstMeasureValue = firstMeasure && row[firstMeasure.name].value
+      const secondMeasureValue = secondMeasure && row[secondMeasure.name].value
+
+      var color = row[config['color_by']].value
+
+      maxColor.push(color)
+
+      var rendered_val = config.value_format == undefined ? false : SSF.format(config.value_format, row[config['size_by']].value);
+      bubbleChartData.push({
+        itemName: dimensionValue,
+        value: row[config['size_by']].value,
+        rendered: rendered_val ? rendered_val : LookerCharts.Utils.textForCell(row[config['size_by']]),
+        color: color
+      })
+    })
 
     // console.log(Math.max.apply(null, maxColor));
     // Finally update the state with our new data

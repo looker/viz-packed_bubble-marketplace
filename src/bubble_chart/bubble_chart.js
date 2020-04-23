@@ -96,12 +96,38 @@ class BubbleChart extends Component {
       .attr("class", "circle_node")
       .attr("r", function(d) { return d.r; })
       .style("z-index", 1)
-      .style("opacity", function(d) { return ((d.data.color / maxColor > .15) ? d.data.color / maxColor : .15) })
-      .style("fill", config['toColor'])
+      .style("opacity", function(d) {
+        if (config.color_by_type == "fill") {
+          return 1;
+        } else if (config.color_by_type == "cat") {
+          return 1;
+        } else {
+          return ((d.data.color / maxColor > .15) ? d.data.color / maxColor : .15)
+        }
+      })
+      .style("fill", function(d) {
+        if (config.color_by_type == "fill") {
+          return config.toColor[0];
+        } else if (config.color_by_type == "cat") {
+          var index_color = Math.round((d.data.color / maxColor)*config.toColor.length) - 1;
+          return config.toColor[index_color < 0 ? 0 : index_color];
+        } else {
+          return config.toColor[0];
+        }
+      })
       .on("mousemove", function(d) {
         d3.select(this)
           .style("stroke-width", 10)    // set the stroke width
-          .style("stroke", config['toColor'])
+          .style("stroke", function(d) {
+            if (config.color_by_type == "fill") {
+              return config.toColor[0];
+            } else if (config.color_by_type == "cat") {
+              var index_color = Math.round((d.data.color / maxColor)*config.toColor.length) - 1;
+              return config.toColor[index_color < 0 ? 0 : index_color];
+            } else {
+              return config.toColor[0];
+            }
+          })
           .style("z-index", 10)
           .style("stroke-opacity", function(d) { return ((d.data.color / maxColor > .5) ? d.data.color / 2 / maxColor : d.data.color * 2 / maxColor) });
       })
@@ -109,7 +135,15 @@ class BubbleChart extends Component {
         d3.select(this)
           .style("z-index", 1)
           .style("stroke-width", 0)
-          .style("opacity", function(d) { return ((d.data.color / maxColor > .15) ? d.data.color / maxColor : .15) });
+          .style("opacity", function(d) {
+            if (config.color_by_type == "fill") {
+              return 1;
+            } else if (config.color_by_type == "cat") {
+              return 1;
+            } else {
+              return ((d.data.color / maxColor > .15) ? d.data.color / maxColor : .15)
+            }
+          });
       });
 
     if (config['value_titles'] !== false) {
@@ -127,7 +161,7 @@ class BubbleChart extends Component {
         .attr("dy", config['value_titles'] === false ? ".3em" : "1.5em")
         .style("font-size", config['font_size_label'])
         .style("text-anchor", "middle")
-        .text(function(d) { return d.data.value });
+        .text(function(d) { return d.data.rendered });
     }
 
     node.on("mousemove", function(d) {
@@ -136,7 +170,7 @@ class BubbleChart extends Component {
 
           let tooltip_html = ''
           tooltip_html += '<div><span>' + d.data.itemName + '<br/></span>';
-          tooltip_html += '<span>   ' + d.data.value + '</span></div>';
+          tooltip_html += '<span>   ' + d.data.rendered + '</span></div>';
 
           d3.select('#tooltip').html(tooltip_html);
 
