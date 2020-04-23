@@ -44,6 +44,7 @@ const baseOptions = {
   value_format: {
     type: 'string',
     label: `Value Formatting Override`,
+    placeholder: "Spreadsheet-style format code",
     section: 'Series',
     order: 7
   },
