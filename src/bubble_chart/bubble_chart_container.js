@@ -85,7 +85,7 @@ looker.plugins.visualizations.add({
   create: function(element, config) {
     // Render to the target element
     this.chart = ReactDOM.render(
-      <BubbleChart />,
+      <div />,
       element
     );
   },
@@ -113,6 +113,11 @@ looker.plugins.visualizations.add({
       this.addError({title: "Dimensions", message: "This chart requires at least 1 dimension."});
       return;
     }
+    if (data.length === 0){
+      done();
+      return;
+    }
+
 
     // const secondDimension = dimensions[1]
     const firstMeasure = measures[0]
