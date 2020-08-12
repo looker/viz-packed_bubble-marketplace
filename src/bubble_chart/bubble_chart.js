@@ -28,7 +28,7 @@ class BubbleChart extends Component {
   }
 
   getWindowSize() {
-    return window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+    return Math.min(window.innerWidth, window.innerHeight);
   }
 
   getFontSize() {
@@ -50,6 +50,13 @@ class BubbleChart extends Component {
     }
 
     const { config, data } = this.props;
+
+    // Catches edge case for unregistered config/options on dashboard-next
+    if(config.toColor === undefined){
+      config.font_size_value = 8;
+      config.font_size_label = 10;
+      config.toColor = ["#7FCDAE", "#ffed6f", "#EE7772"];
+    }
 
     const windowSize = this.getWindowSize();
     const fontSize = this.getFontSize();
