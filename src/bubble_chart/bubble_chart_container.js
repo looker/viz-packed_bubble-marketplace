@@ -85,7 +85,7 @@ looker.plugins.visualizations.add({
   create: function(element, config) {
     // Render to the target element
     this.chart = ReactDOM.render(
-      <BubbleChart />,
+      <div />,
       element
     );
   },
@@ -113,6 +113,11 @@ looker.plugins.visualizations.add({
       this.addError({title: "Dimensions", message: "This chart requires at least 1 dimension."});
       return;
     }
+    if (data.length === 0){
+      done();
+      return;
+    }
+
 
     // const secondDimension = dimensions[1]
     const firstMeasure = measures[0]
@@ -155,15 +160,19 @@ looker.plugins.visualizations.add({
       const firstMeasureValue = firstMeasure && row[firstMeasure.name].value
       const secondMeasureValue = secondMeasure && row[secondMeasure.name].value
 
-      var color = row[config['color_by']].value
-
+      var color = config['color_by'] === undefined ? secondMeasureValue : row[config['color_by']].value
+      
       maxColor.push(color)
 
-      var rendered_val = config.value_format == undefined ? false : SSF.format(config.value_format, row[config['size_by']].value);
+      var rendered_val = config.value_format == undefined ? false : SSF.format(
+        config.value_format, config['size_by'] === undefined ? firstMeasureValue : row[config['size_by']].value
+        );
       bubbleChartData.push({
         itemName: dimensionValue,
-        value: row[config['size_by']].value,
-        rendered: rendered_val ? rendered_val : LookerCharts.Utils.textForCell(row[config['size_by']]),
+        value: config['size_by'] === undefined ? firstMeasureValue : row[config['size_by']].value,
+        rendered: rendered_val ? rendered_val : LookerCharts.Utils.textForCell(
+          config['size_by'] === undefined ? row[firstMeasure.name] : row[config['size_by']]
+          ),
         color: color
       })
     })
