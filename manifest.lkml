@@ -12,7 +12,7 @@ constant: VIS_ID {
 
 visualization: {
   id: "@{VIS_ID}"
-  file: "packed_bubble.js"
+  url: "https://marketplace-api.looker.com/viz-dist/packed_bubble.js"
   label: "@{VIS_LABEL}"
 }
 
