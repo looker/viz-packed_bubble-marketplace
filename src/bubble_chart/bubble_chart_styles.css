@@ -1,10 +1,17 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/roboto-v20-latin-regular.woff2") format("woff2");
+}
+   
+
 div.bubble-tooltip {
-     position: absolute;
-     text-align: center;
-     padding: .5rem;
-     color: #313639;
-     border: 1px solid #313639;
-     border-radius: 8px;
-     pointer-events: none;
-     font-size: 1.3rem;
+   position: absolute;
+   text-align: center;
+   font-family: 'Roboto';
+   padding: .5rem;
+   color: #313639;
+   border: 1px solid #313639;
+   border-radius: 8px;
+   pointer-events: none;
+   font-size: 1.3rem;
 }
